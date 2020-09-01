@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <decta_decta>
+                <title>Decta</title>
+                <model>Decta\Decta\Model\Decta</model>
+                <active>1</active>
+                <private_key></private_key>
+                <public_key></public_key>
+            </decta_decta>
+        </payment>
+    </default>
+</config>
+

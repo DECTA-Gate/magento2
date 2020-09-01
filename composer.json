@@ -1,0 +1,28 @@
+{
+  "name": "DECTA-Gate/magento2",
+  "description": "Decta Magento 2 payment module",
+  "type": "magento2-module",
+  "version": "2",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "keywords": [
+    "magento2_module",
+    "magento2_payment_module",
+    "payment_gateway",
+    "magento2_payment_gateway",
+    "payment_processing",
+    "magento2_payment_processing",
+    "e-commerce"
+  ],
+  "require": {
+    "php": "~7.0.0|~7.1.0|~7.2.0|~7.3.0"
+  },
+  "autoload": {
+    "files": [ "registration.php" ],
+    "psr-4": {
+      "Decta\\Decta\\": ""
+    }
+  }
+}
