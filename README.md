@@ -1,7 +1,8 @@
 # Decta
 
 Decta payment module for magento 2.X
-##Manual install
+
+## Manual install
 
 1. Download the Payment Module archive, unpack it and upload its contents to a new folder <root>/app/code/ of your Magento 2 installation
 
@@ -14,7 +15,8 @@ Decta payment module for magento 2.X
     ```text
     $ php bin / magento setup: static-content: deploy
     ```
-##Installation via Composer
+## Installation via Composer
+
 1. Go to Magento2 root folder
 
 2. Enter following commands to install module:
@@ -28,7 +30,7 @@ Decta payment module for magento 2.X
    php bin/magento module:enable Decta_Decta --clear-static-content
    php bin/magento setup:upgrade 
    ``` 
-##Configuration
+## Configuration
 
 1. Login inside the Admin Panel and go to 
     ```text
@@ -43,7 +45,7 @@ Decta payment module for magento 2.X
 3. Go back to Payment Methods and set the settings.
 
 
-##Unistall
+## Unistall
 
 ```text
 $ php bin/magento module:disable Decta_Decta
