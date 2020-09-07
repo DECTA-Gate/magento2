@@ -1,5 +1,5 @@
 {
-  "name": "DECTA-Gate/magento2",
+  "name": "decta-gate/magento2",
   "description": "Decta Magento 2 payment module",
   "type": "magento2-module",
   "version": "1.0.1.0",

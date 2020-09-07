@@ -15,6 +15,19 @@ Decta payment module for magento 2.X
     ```text
     $ php bin / magento setup: static-content: deploy
     ```
+## Manual uninstall
+
+```text
+$ php bin/magento module:disable Decta_Decta
+```
+
+remove directory Decta from app/code manually
+
+```text
+$ php bin/magento setup:upgrade
+$ php bin/magento cache:flush
+```
+
 ## Installation via Composer
 
 1. Go to Magento2 root folder
@@ -30,6 +43,24 @@ Decta payment module for magento 2.X
    php bin/magento module:enable Decta_Decta --clear-static-content
    php bin/magento setup:upgrade 
    ``` 
+4. Deploy Magento Static Content (Execute If needed)
+    ```text
+    $ php bin / magento setup: static-content: deploy
+    ```
+## Uninstallation via Composer
+
+1. Go to Magento2 root folder
+
+2. Enter following commands to uninstall module:
+   ```text
+   php bin/magento module:disable Decta_Decta
+   composer remove DECTA-Gate/magento2
+   ``` 
+3. Execute If needed:
+```text
+$ php bin/magento setup:upgrade
+$ php bin/magento cache:flush
+```
 ## Configuration
 
 1. Login inside the Admin Panel and go to 
@@ -43,19 +74,3 @@ Decta payment module for magento 2.X
     and clear Magento Cache by clicking on Flush Magento Cache.
 
 3. Go back to Payment Methods and set the settings.
-
-
-## Unistall
-
-```text
-$ php bin/magento module:disable Decta_Decta
-```
-
-remove directory Decta from app/code manually
-
-```text
-$ php bin/magento setup:upgrade
-$ php bin/magento cache:flush
-```
-
-
