@@ -2,7 +2,7 @@
   "name": "DECTA-Gate/magento2",
   "description": "Decta Magento 2 payment module",
   "type": "magento2-module",
-  "version": "2",
+  "version": "1.0.1.0",
   "license": [
     "OSL-3.0",
     "AFL-3.0"

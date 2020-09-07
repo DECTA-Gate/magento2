@@ -2,85 +2,122 @@
 namespace Decta\Decta\Controller\Response;
 
 use Decta\Decta\Model\DectaApi;
+use Exception;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\ResultFactory;
+use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\App\Action\Action;
 
-class Success extends \Magento\Framework\App\Action\Action
+class Success extends Action
 {
-  /**
-   * @var \Magento\Framework\Controller\Result\JsonFactory
-   */
-  protected $resultRedirectFactory;
-  /**
-   * @param \Magento\Framework\App\Action\Context $context
-   * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
-   */
-  public function __construct(
-    \Magento\Framework\App\Action\Context $context,
-    \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-    \Magento\Framework\Controller\ResultFactory $resultRedirectFactory,
-    \Magento\Customer\Model\Session $customerSession,
-    \Magento\Checkout\Model\Session $checkoutSession,
-    OrderRepositoryInterface $orderRepository,
-    \Magento\Framework\Message\ManagerInterface $messageManager
-  )
-  {
-    $this->resultRedirectFactory = $resultRedirectFactory;
-    $this->orderRepository = $orderRepository;
-    $this->messageManager = $messageManager;
-    $this->customerSession = $customerSession;
-    $this->scopeConfig = $scopeConfig;
-    $this->checkoutSession = $checkoutSession;
+    /**
+     * @var ResultFactory
+     */
+    protected $resultRedirectFactory;
 
-    parent::__construct($context);
-  }
-  /**
-   * View  page action
-   *
-   * @return \Magento\Framework\Controller\ResultInterface
-   */
-  public function execute()
-  {
-    $privateKey = $this->scopeConfig->getValue('payment/decta_decta/private_key');
-    $publicKey = $this->scopeConfig->getValue('payment/decta_decta/public_key');
+    /**
+     * @var OrderRepositoryInterface
+     */
+    protected $orderRepository;
 
-    $dectaApi = new DectaApi($privateKey, $publicKey);
+    /**
+     * @var CustomerSession
+     */
+    protected $customerSession;
 
-    $dectaApi->logger->info('Success callback');
-    $paymentId = $this->customerSession->getDectaPaymentId();
-    $order = $this->checkoutSession->getLastRealOrder();
-    $orderId = $order->getEntityId();
-    $dectaApi->logger->info('Order id: '. $orderId);
-    $orderEntity = $this->orderRepository->get($orderId);
-    $resultRedirect = $this->resultRedirectFactory->create();
+    /**
+     * @var CheckoutSession
+     */
+    protected $checkoutSession;
 
+    /**
+     * @var ManagerInterface
+     */
+    protected $messageManager;
 
-    if ($dectaApi->was_payment_successful($orderId, $paymentId)) {
-      $orderEntity->setState(Order::STATE_COMPLETE);
-      $orderEntity->setStatus(Order::STATE_COMPLETE);
-      $dectaApi->logger->info('Payment verified, redirecting to success');
-      $resultRedirect->setPath('checkout/onepage/success');
+    /**
+     * @var Context
+     */
+    protected $context;
 
-      try {
-        $this->orderRepository->save($orderEntity);
-      }catch (\Exception $e) {
-        $dectaApi->logger->info($e);
-        $this->messageManager->addExceptionMessage($e, $e->getMessage());
-        $resultRedirect->setPath('checkout/onepage/failure');
-      }
+    /**
+     * @var DectaApi
+     */
+    protected $dectaApi;
 
-    } else {
-      $dectaApi->log_error('Could not verify payment!');
-      $orderEntity->setState(Order::STATE_HOLDED);
-      $orderEntity->setStatus(Order::STATE_CANCELED);
-      try {
-        $this->orderRepository->save($orderEntity);
-      }catch (\Exception $e) {
-        $dectaApi->logger->info($e);
-        $this->messageManager->addExceptionMessage($e, $e->getMessage());
-      }
+    /**
+     * Success constructor.
+     * @param Context $context
+     * @param ResultFactory $resultRedirectFactory
+     * @param CustomerSession $customerSession
+     * @param CheckoutSession $checkoutSession
+     * @param OrderRepositoryInterface $orderRepository
+     * @param ManagerInterface $messageManager
+     * @param DectaApi $dectaApi
+     */
+    public function __construct(
+        Context $context,
+        ResultFactory $resultRedirectFactory,
+        CustomerSession $customerSession,
+        CheckoutSession $checkoutSession,
+        OrderRepositoryInterface $orderRepository,
+        ManagerInterface $messageManager,
+        DectaApi $dectaApi
+    ) {
+        $this->resultRedirectFactory = $resultRedirectFactory;
+        $this->orderRepository = $orderRepository;
+        $this->messageManager = $messageManager;
+        $this->customerSession = $customerSession;
+        $this->checkoutSession = $checkoutSession;
+        $this->context = $context;
+        $this->dectaApi = $dectaApi;
+
+        parent::__construct($this->context);
     }
 
-    return $resultRedirect;
-  }
+    /**
+     * @return mixed
+     */
+    public function execute()
+    {
+        $this->dectaApi->logger->info('Success callback');
+        $paymentId = $this->customerSession->getDectaPaymentId();
+        $order = $this->checkoutSession->getLastRealOrder();
+        $orderId = $order->getEntityId();
+        $this->dectaApi->logger->info('Order id: '. $orderId);
+        $orderEntity = $this->orderRepository->get($orderId);
+        $resultRedirect = $this->resultRedirectFactory->create();
+
+        if ($this->dectaApi->wasPaymentSuccessful($orderId, $paymentId)) {
+            $orderEntity->setState(Order::STATE_COMPLETE);
+            $orderEntity->setStatus(Order::STATE_COMPLETE);
+            $this->dectaApi->logger->info('Payment verified, redirecting to success');
+            $resultRedirect->setPath('checkout/onepage/success');
+
+            try {
+                $this->orderRepository->save($orderEntity);
+            } catch (Exception $e) {
+                $this->dectaApi->logger->info($e);
+                $this->messageManager->addExceptionMessage($e, $e->getMessage());
+                $resultRedirect->setPath('checkout/onepage/failure');
+            }
+
+        } else {
+            $this->dectaApi->log_error('Could not verify payment!');
+            $orderEntity->setState(Order::STATE_HOLDED);
+            $orderEntity->setStatus(Order::STATE_CANCELED);
+            try {
+                $this->orderRepository->save($orderEntity);
+            } catch (Exception $e) {
+                $this->dectaApi->logger->info($e);
+                $this->messageManager->addExceptionMessage($e, $e->getMessage());
+            }
+        }
+
+        return $resultRedirect;
+    }
 }
