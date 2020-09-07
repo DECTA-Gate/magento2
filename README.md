@@ -4,7 +4,7 @@ Decta payment module for magento 2.X
 
 ## Manual install
 
-1. Download the Payment Module archive, unpack it and upload its contents to a new folder <root>/app/code/ of your Magento 2 installation
+1. Download the Payment Module archive, unpack it and upload its contents to a new folder <root>/app/code/Decta/Decta/ of your Magento 2 installation
 
 2. Enable Payment Module
     ```text
