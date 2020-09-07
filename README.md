@@ -35,7 +35,7 @@ $ php bin/magento cache:flush
 2. Enter following commands to install module:
    ```text
    composer config repositories.DECTA-Gate git https://github.com/DECTA-Gate/magento2.git
-   composer require DECTA-Gate/magento2:dev-master 
+   composer require decta-gate/magento2:dev-master 
    ``` 
    Wait while dependencies are updated.
 3. Enter following commands to enable module:
@@ -54,7 +54,7 @@ $ php bin/magento cache:flush
 2. Enter following commands to uninstall module:
    ```text
    php bin/magento module:disable Decta_Decta
-   composer remove DECTA-Gate/magento2
+   composer remove decta-gate/magento2
    ``` 
 3. Execute If needed:
 ```text
