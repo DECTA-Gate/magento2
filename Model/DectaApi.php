@@ -171,6 +171,18 @@ class DectaApi
             $this->logger->info('Response:');
             $this->logger->info(var_export($response, true));
 
+            if (!$response) {
+                $this->log_error('JSON parsing error/NULL API response');
+
+                return null;
+            }
+
+            if (!empty($response['errors'])) {
+                $this->log_error('API Errors', var_export($response['errors'], true));
+
+                return null;
+            }
+
             return $response;
 
         } catch (Exception $e) {
