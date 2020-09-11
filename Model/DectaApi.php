@@ -10,7 +10,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 class DectaApi
 {
     const DECTA_MODULE_VERSION = 'v1.0.1.0';
-    const ROOT_URL = 'https://gate-decta.andersenlab.com';
+    const ROOT_URL = 'https://gate.decta.com';
     const LOG_URL = '/var/log/decta.log';
 
     public function __construct(Curl $curl, Logger $logger, ScopeConfigInterface $scopeConfig)
