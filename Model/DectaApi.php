@@ -143,7 +143,12 @@ class DectaApi
         try {
             $this->curl->addHeader('Content-Type', 'application/json');
             $this->curl->addHeader('Authorization', 'Bearer ' . $this->private_key);
-            $options = [CURLOPT_RETURNTRANSFER => true, CURLOPT_FORBID_REUSE => true, CURLOPT_FRESH_CONNECT => true];
+            $options = [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FORBID_REUSE => true,
+                CURLOPT_FRESH_CONNECT => true,
+                CURLOPT_SSL_VERIFYPEER => false
+            ];
             $this->curl->setOptions($options);
             $url = self::ROOT_URL . $route;
 
