@@ -27,7 +27,7 @@ class DectaApi
     {
         $params = [
         'number' => (string)$order->getEntityId(),
-        'referrer' => 'Magento v2.x module ' . self::DECTA_MODULE_VERSION,
+        'referrer' => 'magento v2.x module ' . self::DECTA_MODULE_VERSION,
         'language' =>  'en',
         'success_redirect' => $successUrl,
         'failure_redirect' => $failureUrl,
