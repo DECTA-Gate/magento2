@@ -13,7 +13,7 @@ Decta payment module for magento 2.X
     ```
 3. Deploy Magento Static Content (Execute If needed)
     ```text
-    $ php bin / magento setup: static-content: deploy
+    $ php bin/magento setup:static-content: deploy
     ```
 ## Manual uninstall
 

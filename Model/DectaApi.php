@@ -6,6 +6,7 @@ use Zend\Log\Logger;
 use Zend\Log\Writer\Stream;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Locale\Resolver as LocaleResolver;
 
 class DectaApi
 {
@@ -13,14 +14,20 @@ class DectaApi
     const ROOT_URL = 'https://gate.decta.com';
     const LOG_URL = '/var/log/decta.log';
 
-    public function __construct(Curl $curl, Logger $logger, ScopeConfigInterface $scopeConfig)
+    public function __construct(
+        Curl $curl,
+        Logger $logger,
+        ScopeConfigInterface $scopeConfig,
+        LocaleResolver $localeResolver)
     {
         $this->scopeConfig = $scopeConfig;
+        $this->localeResolver = $localeResolver;
         $this->private_key =$this->scopeConfig->getValue('payment/decta_decta/private_key');
         $this->public_key = $this->scopeConfig->getValue('payment/decta_decta/public_key');
         $this->logger = $logger;
         $this->logger->addWriter(new Stream(BP . self::LOG_URL));
         $this->curl = $curl;
+        $this->language = locale_get_primary_language($this->localeResolver->getLocale());
     }
 
     public function createPayment($order, $successUrl, $failureUrl)
@@ -28,7 +35,7 @@ class DectaApi
         $params = [
         'number' => (string)$order->getEntityId(),
         'referrer' => 'magento v2.x module ' . self::DECTA_MODULE_VERSION,
-        'language' =>  'en',
+        'language' =>  $this->language,
         'success_redirect' => $successUrl,
         'failure_redirect' => $failureUrl,
         'currency' => $order->getOrderCurrencyCode()
@@ -70,9 +77,19 @@ class DectaApi
 
     protected function addProducts($order, &$params)
     {
+        $title = 'Invoice for payment #';
+
+        if ($this->language === 'ru') {
+            $title = 'Счет на оплату #';
+        }
+
+        if ($this->language === 'lv') {
+            $title = 'Maksājuma rēķins #';
+        }
+
         $params['products'][] = [
             'price' => round($order->getGrandTotal(), 2),
-            'title' => 'default',
+            'title' => $title . (string)$order->getEntityId(),
             'quantity' => 1
         ];
     }
